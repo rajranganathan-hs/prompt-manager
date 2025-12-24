@@ -50,14 +50,17 @@ const SKELETON_COUNT = 9;
  * PromptsLoading component that displays skeleton cards while prompts are being loaded.
  * Uses ShadCN Card and Skeleton components with Framer Motion animations.
  * The skeleton layout matches the actual prompts grid layout for a smooth transition.
+ * Includes exit animations for smooth transitions when data loads.
  */
 export const PromptsLoading = () => {
   return (
     <motion.div
+      key="loading-skeleton"
       className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
+      exit={{ opacity: 0, transition: { duration: 0.3 } }}
     >
       {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
         <motion.div

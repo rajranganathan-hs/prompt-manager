@@ -52,7 +52,8 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1, // Stagger each child animation by 0.1 seconds
+      staggerChildren: 0.08, // Stagger each child animation by 0.08 seconds for smoother flow
+      delayChildren: 0.1, // Small delay before starting children animations
     },
   },
 };
@@ -64,14 +65,15 @@ const containerVariants = {
 const cardVariants = {
   hidden: {
     opacity: 0,
-    y: 20, // Start 20px below final position
+    y: 30, // Start 30px below final position for more noticeable animation
+    scale: 0.95, // Slightly smaller initially
   },
   visible: {
     opacity: 1,
     y: 0, // End at final position
     scale: 1,
     transition: {
-      duration: 0.5, // Animation duration in seconds
+      duration: 0.6, // Longer duration for smoother animation
     },
   },
   hover: {
@@ -184,6 +186,7 @@ export const PromptsGrid = ({ prompts }: PromptsGridProps) => {
   return (
     <>
       <motion.div
+        key="prompts-grid"
         className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
         variants={containerVariants}
         initial="hidden"

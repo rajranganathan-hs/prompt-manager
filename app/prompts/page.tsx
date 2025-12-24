@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import { getPrompts } from "@/actions/prompts-actions";
-import { PromptsGrid } from "./_components/prompts-grid";
 import { PageHeader } from "./_components/page-header";
 import { PromptsLoading } from "./_components/prompts-loading";
+import { PromptsWrapper } from "./_components/prompts-wrapper";
 
 /**
  * Force dynamic rendering to prevent caching.
@@ -14,6 +14,7 @@ export const revalidate = 0;
 /**
  * PromptsContent component that fetches and displays prompts.
  * This is separated so we can wrap it with Suspense for loading states.
+ * Returns null initially to trigger the loading state, then passes data to the wrapper.
  */
 async function PromptsContent() {
   // Fetch prompts from the database using the server action
@@ -21,7 +22,7 @@ async function PromptsContent() {
   // With force-dynamic, this will always fetch fresh data
   const prompts = await getPrompts();
 
-  return <PromptsGrid prompts={prompts} />;
+  return <PromptsWrapper prompts={prompts} />;
 }
 
 /**

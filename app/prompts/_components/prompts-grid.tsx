@@ -189,11 +189,11 @@ export const PromptsGrid = ({ prompts }: PromptsGridProps) => {
           >
             {/* ShadCN Card component wrapped with Framer Motion animations */}
             <Card
-              className="relative flex flex-col h-full transition-shadow duration-200 hover:shadow-md"
+              className="group relative flex flex-col h-full transition-shadow duration-200 hover:shadow-md"
               onMouseLeave={handleCardMouseLeave}
             >
-              {/* Action Buttons - Icon only, positioned in top right */}
-              <div className="absolute top-2 right-2 flex gap-1">
+              {/* Action Buttons - Icon only, positioned in top right, visible on hover */}
+              <div className="absolute top-2 right-2 flex gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                 {/* Copy Button */}
                 <Button
                   variant="ghost"

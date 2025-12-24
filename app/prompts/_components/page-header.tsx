@@ -1,46 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CreatePromptDialog } from "./create-prompt-dialog";
 
 /**
- * Animation variants for the page header.
- * The header will fade in and slide down smoothly.
- */
-const headerVariants = {
-  hidden: {
-    opacity: 0,
-    y: -20, // Start 20px above final position
-  },
-  visible: {
-    opacity: 1,
-    y: 0, // End at final position
-    transition: {
-      duration: 0.4,
-    },
-  },
-};
-
-/**
- * PageHeader component with smooth Framer Motion animations.
+ * PageHeader component.
  * Displays the page title, description, and a create button.
  * The create button opens a dialog to add new prompts.
+ * Rendered without animations to prevent flicker on page navigation.
+ * Uses a fixed height structure to prevent layout shifts during re-renders.
  */
 export const PageHeader = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
     <>
-      <motion.div
-        className="mb-8 flex items-start justify-between gap-4"
-        variants={headerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <div>
+      <div className="mb-8 flex items-start justify-between gap-4 min-h-[80px]">
+        <div className="flex-1">
           <h1 className="text-3xl font-bold text-foreground mb-2">Prompts</h1>
           <p className="text-muted-foreground">
             Browse and manage all your favorite prompts
@@ -52,7 +30,7 @@ export const PageHeader = () => {
           <Plus className="mr-2 h-4 w-4" />
           Create
         </Button>
-      </motion.div>
+      </div>
 
       {/* Create Prompt Dialog */}
       <CreatePromptDialog

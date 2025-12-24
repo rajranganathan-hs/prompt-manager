@@ -36,14 +36,17 @@ export default function PromptsPage() {
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="max-w-7xl mx-auto">
-        {/* Page Header with animations */}
+        {/* Page Header with animations - rendered outside Suspense to prevent re-renders */}
         <PageHeader />
 
         {/* Prompts Grid with Suspense for loading state */}
         {/* The PromptsLoading component will show while data is being fetched */}
-        <Suspense fallback={<PromptsLoading />}>
-          <PromptsContent />
-        </Suspense>
+        {/* Using a key to prevent layout shifts during transitions */}
+        <div key="prompts-content" className="relative">
+          <Suspense fallback={<PromptsLoading />}>
+            <PromptsContent />
+          </Suspense>
+        </div>
       </div>
     </div>
   );

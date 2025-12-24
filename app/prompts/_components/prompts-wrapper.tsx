@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { PromptsGrid } from "./prompts-grid";
 
 /**
@@ -21,32 +20,10 @@ type PromptsWrapperProps = {
 };
 
 /**
- * Animation variants for smooth fade-in of the content.
- */
-const wrapperVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      duration: 0.5,
-      staggerChildren: 0.05, // Stagger the children animations slightly
-    },
-  },
-};
-
-/**
- * PromptsWrapper component that wraps the PromptsGrid with smooth fade-in animation.
- * This ensures a smooth transition when data loads and replaces the loading skeleton.
+ * PromptsWrapper component that wraps the PromptsGrid.
+ * Removed wrapper animations to prevent flicker - the grid component handles its own animations.
  */
 export const PromptsWrapper = ({ prompts }: PromptsWrapperProps) => {
-  return (
-    <motion.div
-      variants={wrapperVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      <PromptsGrid prompts={prompts} />
-    </motion.div>
-  );
+  return <PromptsGrid prompts={prompts} />;
 };
 

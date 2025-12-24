@@ -73,6 +73,7 @@ const cardVariants = {
  * PromptsGrid component that displays prompts in a responsive grid layout.
  * Each prompt is displayed as a card showing the title (name), description, and content.
  * Uses ShadCN Card components for consistent styling and Framer Motion for smooth animations.
+ * Cards animate in with a stagger effect and have smooth hover interactions.
  */
 export const PromptsGrid = ({ prompts }: PromptsGridProps) => {
   return (
@@ -87,8 +88,10 @@ export const PromptsGrid = ({ prompts }: PromptsGridProps) => {
           key={prompt.id || prompt.name}
           variants={cardVariants}
           whileHover="hover"
+          whileTap={{ scale: 0.98 }} // Slight press effect on click
         >
-          <Card className="flex flex-col h-full cursor-pointer">
+          {/* ShadCN Card component wrapped with Framer Motion animations */}
+          <Card className="flex flex-col h-full cursor-pointer transition-shadow duration-200 hover:shadow-md">
             {/* Card Header with Title and Description */}
             <CardHeader>
               <CardTitle>{prompt.name}</CardTitle>

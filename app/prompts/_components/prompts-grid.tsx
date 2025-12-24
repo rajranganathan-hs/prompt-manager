@@ -79,11 +79,12 @@ const cardVariants = {
  * Each prompt is displayed as a card showing the title (name), description, and content.
  * Uses ShadCN Card components for consistent styling and Framer Motion for smooth animations.
  * Cards animate in with a stagger effect and have smooth hover interactions.
- * Each card has an update button that opens a dialog to edit the prompt.
+ * Each card has update and delete buttons in the top right corner.
  */
 export const PromptsGrid = ({ prompts }: PromptsGridProps) => {
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   /**
    * Handles opening the update dialog for a specific prompt.
@@ -103,11 +104,39 @@ export const PromptsGrid = ({ prompts }: PromptsGridProps) => {
   };
 
   /**
+   * Handles opening the delete dialog for a specific prompt.
+   * Sets the selected prompt and opens the dialog.
+   */
+  const handleDeleteClick = (prompt: Prompt) => {
+    // Ensure the prompt has an id before opening the dialog
+    if (prompt.id) {
+      setSelectedPrompt({
+        id: prompt.id,
+        name: prompt.name,
+        description: prompt.description,
+        content: prompt.content,
+      });
+      setIsDeleteDialogOpen(true);
+    }
+  };
+
+  /**
    * Handles closing the update dialog.
    * Resets the selected prompt when the dialog is closed.
    */
-  const handleDialogClose = (open: boolean) => {
+  const handleUpdateDialogClose = (open: boolean) => {
     setIsUpdateDialogOpen(open);
+    if (!open) {
+      setSelectedPrompt(null);
+    }
+  };
+
+  /**
+   * Handles closing the delete dialog.
+   * Resets the selected prompt when the dialog is closed.
+   */
+  const handleDeleteDialogClose = (open: boolean) => {
+    setIsDeleteDialogOpen(open);
     if (!open) {
       setSelectedPrompt(null);
     }
@@ -130,19 +159,36 @@ export const PromptsGrid = ({ prompts }: PromptsGridProps) => {
           >
             {/* ShadCN Card component wrapped with Framer Motion animations */}
             <Card className="relative flex flex-col h-full transition-shadow duration-200 hover:shadow-md">
-              {/* Update Button - Icon only, positioned in top right */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent card click events
-                  handleUpdateClick(prompt);
-                }}
-                className="absolute top-2 right-2 h-8 w-8"
-              >
-                <Pencil className="h-4 w-4" />
-                <span className="sr-only">Update prompt</span>
-              </Button>
+              {/* Action Buttons - Icon only, positioned in top right */}
+              <div className="absolute top-2 right-2 flex gap-1">
+                {/* Update Button */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent card click events
+                    handleUpdateClick(prompt);
+                  }}
+                  className="h-8 w-8"
+                >
+                  <Pencil className="h-4 w-4" />
+                  <span className="sr-only">Update prompt</span>
+                </Button>
+
+                {/* Delete Button */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent card click events
+                    handleDeleteClick(prompt);
+                  }}
+                  className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  <span className="sr-only">Delete prompt</span>
+                </Button>
+              </div>
 
               {/* Card Header with Title and Description */}
               <CardHeader>
@@ -164,7 +210,14 @@ export const PromptsGrid = ({ prompts }: PromptsGridProps) => {
       {/* Update Prompt Dialog */}
       <UpdatePromptDialog
         open={isUpdateDialogOpen}
-        onOpenChange={handleDialogClose}
+        onOpenChange={handleUpdateDialogClose}
+        prompt={selectedPrompt}
+      />
+
+      {/* Delete Prompt Dialog */}
+      <DeletePromptDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={handleDeleteDialogClose}
         prompt={selectedPrompt}
       />
     </>

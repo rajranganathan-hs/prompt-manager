@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Copy, Check } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -85,6 +85,7 @@ export const PromptsGrid = ({ prompts }: PromptsGridProps) => {
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [copiedPromptId, setCopiedPromptId] = useState<number | null>(null);
 
   /**
    * Handles opening the update dialog for a specific prompt.
@@ -142,6 +143,35 @@ export const PromptsGrid = ({ prompts }: PromptsGridProps) => {
     }
   };
 
+  /**
+   * Handles copying the prompt content to clipboard.
+   * Copies the content and shows a checkmark icon.
+   */
+  const handleCopyClick = async (prompt: Prompt, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click events
+
+    if (!prompt.id) return;
+
+    try {
+      // Copy the prompt content to clipboard
+      await navigator.clipboard.writeText(prompt.content);
+      
+      // Set the copied state to show checkmark
+      setCopiedPromptId(prompt.id);
+    } catch (err) {
+      // Handle clipboard errors (e.g., if clipboard API is not available)
+      console.error("Failed to copy to clipboard:", err);
+    }
+  };
+
+  /**
+   * Handles mouse leave event on the card.
+   * Resets the copied state when user hovers out of the card.
+   */
+  const handleCardMouseLeave = () => {
+    setCopiedPromptId(null);
+  };
+
   return (
     <>
       <motion.div
@@ -158,9 +188,27 @@ export const PromptsGrid = ({ prompts }: PromptsGridProps) => {
             whileTap={{ scale: 0.98 }} // Slight press effect on click
           >
             {/* ShadCN Card component wrapped with Framer Motion animations */}
-            <Card className="relative flex flex-col h-full transition-shadow duration-200 hover:shadow-md">
+            <Card
+              className="relative flex flex-col h-full transition-shadow duration-200 hover:shadow-md"
+              onMouseLeave={handleCardMouseLeave}
+            >
               {/* Action Buttons - Icon only, positioned in top right */}
               <div className="absolute top-2 right-2 flex gap-1">
+                {/* Copy Button */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => handleCopyClick(prompt, e)}
+                  className="h-8 w-8"
+                >
+                  {copiedPromptId === prompt.id ? (
+                    <Check className="h-4 w-4 text-green-600" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                  <span className="sr-only">Copy prompt content</span>
+                </Button>
+
                 {/* Update Button */}
                 <Button
                   variant="ghost"

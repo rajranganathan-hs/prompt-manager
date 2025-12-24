@@ -20,7 +20,6 @@ const headerVariants = {
     y: 0, // End at final position
     transition: {
       duration: 0.4,
-      ease: "easeOut",
     },
   },
 };

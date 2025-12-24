@@ -26,6 +26,17 @@ type Prompt = {
 };
 
 /**
+ * Type definition for a prompt with required id.
+ * Used for update and delete operations.
+ */
+type PromptWithId = {
+  id: number;
+  name: string;
+  description: string;
+  content: string;
+};
+
+/**
  * Props for the PromptsGrid component.
  */
 type PromptsGridProps = {
@@ -61,7 +72,6 @@ const cardVariants = {
     scale: 1,
     transition: {
       duration: 0.5, // Animation duration in seconds
-      ease: "easeOut", // Smooth easing function
     },
   },
   hover: {
@@ -69,7 +79,6 @@ const cardVariants = {
     y: -4, // Lift up by 4px on hover
     transition: {
       duration: 0.2,
-      ease: "easeInOut",
     },
   },
 };
@@ -82,7 +91,7 @@ const cardVariants = {
  * Each card has update and delete buttons in the top right corner.
  */
 export const PromptsGrid = ({ prompts }: PromptsGridProps) => {
-  const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
+  const [selectedPrompt, setSelectedPrompt] = useState<PromptWithId | null>(null);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [copiedPromptId, setCopiedPromptId] = useState<number | null>(null);
@@ -93,7 +102,7 @@ export const PromptsGrid = ({ prompts }: PromptsGridProps) => {
    */
   const handleUpdateClick = (prompt: Prompt) => {
     // Ensure the prompt has an id before opening the dialog
-    if (prompt.id) {
+    if (prompt.id !== undefined) {
       setSelectedPrompt({
         id: prompt.id,
         name: prompt.name,
@@ -110,7 +119,7 @@ export const PromptsGrid = ({ prompts }: PromptsGridProps) => {
    */
   const handleDeleteClick = (prompt: Prompt) => {
     // Ensure the prompt has an id before opening the dialog
-    if (prompt.id) {
+    if (prompt.id !== undefined) {
       setSelectedPrompt({
         id: prompt.id,
         name: prompt.name,
@@ -150,7 +159,7 @@ export const PromptsGrid = ({ prompts }: PromptsGridProps) => {
   const handleCopyClick = async (prompt: Prompt, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click events
 
-    if (!prompt.id) return;
+    if (prompt.id === undefined) return;
 
     try {
       // Copy the prompt content to clipboard

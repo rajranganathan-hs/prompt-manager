@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { Pencil, Trash2 } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -8,6 +10,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { UpdatePromptDialog } from "./update-prompt-dialog";
+import { DeletePromptDialog } from "./delete-prompt-dialog";
 
 /**
  * Type definition for a prompt object.
@@ -74,40 +79,95 @@ const cardVariants = {
  * Each prompt is displayed as a card showing the title (name), description, and content.
  * Uses ShadCN Card components for consistent styling and Framer Motion for smooth animations.
  * Cards animate in with a stagger effect and have smooth hover interactions.
+ * Each card has an update button that opens a dialog to edit the prompt.
  */
 export const PromptsGrid = ({ prompts }: PromptsGridProps) => {
-  return (
-    <motion.div
-      className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      {prompts.map((prompt) => (
-        <motion.div
-          key={prompt.id || prompt.name}
-          variants={cardVariants}
-          whileHover="hover"
-          whileTap={{ scale: 0.98 }} // Slight press effect on click
-        >
-          {/* ShadCN Card component wrapped with Framer Motion animations */}
-          <Card className="flex flex-col h-full cursor-pointer transition-shadow duration-200 hover:shadow-md">
-            {/* Card Header with Title and Description */}
-            <CardHeader>
-              <CardTitle>{prompt.name}</CardTitle>
-              <CardDescription>{prompt.description}</CardDescription>
-            </CardHeader>
+  const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
 
-            {/* Card Content with the prompt content */}
-            <CardContent className="flex-1">
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {prompt.content}
-              </p>
-            </CardContent>
-          </Card>
-        </motion.div>
-      ))}
-    </motion.div>
+  /**
+   * Handles opening the update dialog for a specific prompt.
+   * Sets the selected prompt and opens the dialog.
+   */
+  const handleUpdateClick = (prompt: Prompt) => {
+    // Ensure the prompt has an id before opening the dialog
+    if (prompt.id) {
+      setSelectedPrompt({
+        id: prompt.id,
+        name: prompt.name,
+        description: prompt.description,
+        content: prompt.content,
+      });
+      setIsUpdateDialogOpen(true);
+    }
+  };
+
+  /**
+   * Handles closing the update dialog.
+   * Resets the selected prompt when the dialog is closed.
+   */
+  const handleDialogClose = (open: boolean) => {
+    setIsUpdateDialogOpen(open);
+    if (!open) {
+      setSelectedPrompt(null);
+    }
+  };
+
+  return (
+    <>
+      <motion.div
+        className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {prompts.map((prompt) => (
+          <motion.div
+            key={prompt.id || prompt.name}
+            variants={cardVariants}
+            whileHover="hover"
+            whileTap={{ scale: 0.98 }} // Slight press effect on click
+          >
+            {/* ShadCN Card component wrapped with Framer Motion animations */}
+            <Card className="relative flex flex-col h-full transition-shadow duration-200 hover:shadow-md">
+              {/* Update Button - Icon only, positioned in top right */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent card click events
+                  handleUpdateClick(prompt);
+                }}
+                className="absolute top-2 right-2 h-8 w-8"
+              >
+                <Pencil className="h-4 w-4" />
+                <span className="sr-only">Update prompt</span>
+              </Button>
+
+              {/* Card Header with Title and Description */}
+              <CardHeader>
+                <CardTitle>{prompt.name}</CardTitle>
+                <CardDescription>{prompt.description}</CardDescription>
+              </CardHeader>
+
+              {/* Card Content with the prompt content */}
+              <CardContent className="flex-1">
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {prompt.content}
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </motion.div>
+
+      {/* Update Prompt Dialog */}
+      <UpdatePromptDialog
+        open={isUpdateDialogOpen}
+        onOpenChange={handleDialogClose}
+        prompt={selectedPrompt}
+      />
+    </>
   );
 };
 
